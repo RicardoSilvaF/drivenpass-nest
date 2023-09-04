@@ -25,8 +25,6 @@ export class UsersRepository {
     }
 
     async getById(id: number) {
-        return this.prisma.user.findUnique({
-          where: { id }
-        })
-      }
+        return await this.prisma.user.findUnique({ where: { id } });
+    }
 }

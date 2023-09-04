@@ -13,6 +13,8 @@ export class AuthService {
     ) { }
 
     private EXPIRATION_TIME = '7 days';
+    private ISSUER = "Driven";
+    private AUDIENCE = "users";
 
     async signUp(body: SignUpDto) {
         return await this.userService.signUp(body);
@@ -30,17 +32,23 @@ export class AuthService {
     }
 
     createToken(user: User) {
-        const { email } = user;
+        const { id, email } = user;
 
         const token = this.jwtService.sign({ email }, {
             expiresIn: this.EXPIRATION_TIME,
+            subject: String(id),
+            issuer: this.ISSUER,
+            audience: this.AUDIENCE
         })
 
         return { token };
     }
 
     checkToken(token: string) {
-        const data = this.jwtService.verify(token, {});
+        const data = this.jwtService.verify(token, {
+            audience: this.AUDIENCE,
+            issuer: this.ISSUER
+        });
 
         return data;
     }

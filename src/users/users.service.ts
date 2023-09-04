@@ -19,10 +19,7 @@ export class UsersService {
         return await this.repository.getUserByEmail(email);
     }
     
-    async getById(id: number) {
-        const user = await this.repository.getById(id);
-        if (!user) throw new NotFoundException("User not found!");
-    
-        return user;
-      }
+    async getById(id: number){
+        return await this.repository.getById(id);
+    }
 }

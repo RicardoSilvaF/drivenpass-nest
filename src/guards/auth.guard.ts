@@ -12,13 +12,17 @@ export class AuthGuard implements CanActivate {
 
 
   async canActivate(context: ExecutionContext) {
-    const request = context.switchToHttp().getRequest();
+    // na requisição
+    const request = context.switchToHttp().getRequest(); // estamos pegando o objeto da request
     const { authorization } = request.headers;
-
+    if (!authorization) {
+      return false;
+    }
+    // regras
     try {
-      const data = this.authService.checkToken((authorization ?? "").split(" ")[1]);
+      const data = this.authService.checkToken((authorization ?? "").split(" ")[1]); // token é legítimo?
       const user = await this.usersService.getById(parseInt(data.sub));
-      request.user = user; 
+      request.user = user; // colocando o usuário dentro da requiosição ou resposta
       return true;
     } catch (error) {
       console.log(error);
