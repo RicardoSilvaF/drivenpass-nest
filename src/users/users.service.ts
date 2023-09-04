@@ -1,4 +1,4 @@
-import {  HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import {  HttpException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
 import { UserDto } from './dto/users.dto';
 import { UsersRepository } from './users.repository';
 import * as bcrypt from "bcrypt";
@@ -15,22 +15,14 @@ export class UsersService {
         return await this.repository.signUp(User);
     }
 
-    async signIn(userDto: UserDto) {
-        const { email, password } = userDto;
-    
-        const user = await this.repository.getUserByEmail(email);
-    
-        if (!user) {
-            throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
-        }
-    
-        const isPasswordValid = bcrypt.compareSync(password, user.password);
-    
-        if (!isPasswordValid) {
-            throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
-        }
-    
-        return user;
+    async getByEmail(email: string) {
+        return await this.repository.getUserByEmail(email);
     }
     
+    async getById(id: number) {
+        const user = await this.repository.getById(id);
+        if (!user) throw new NotFoundException("User not found!");
+    
+        return user;
+      }
 }
